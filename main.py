@@ -1,0 +1,106 @@
+from tkinter import *
+import math
+
+# ---------------------------- CONSTANTS ------------------------------- #
+PINK = "#e2979c"
+RED = "#e7305b"
+GREEN = "#9bdeac"
+YELLOW = "#f7f5dd"
+FONT_NAME = "Courier"
+WORK_MIN = 25
+SHORT_BREAK_MIN = 5
+LONG_BREAK_MIN = 20
+reps = 0
+timer = None
+
+
+# ---------------------------- TIMER RESET ------------------------------- # 
+def reset_timer() -> None:
+    """
+    The reset_timer() function resets the timer.
+    It resets the displayed time to "00:00", resets the round counter,
+    and removes any check_marks.
+    """
+    window.after_cancel(timer)
+    title_label.config(text="Timer", fg=GREEN)
+    canvas.itemconfig(timer_text, text="00:00")
+    check_marks.config(text="")
+    global reps
+    reps = 0
+
+
+# ---------------------------- TIMER MECHANISM ------------------------------- # 
+
+def start_timer() -> None:
+    """
+    The start_timer() function starts the timer mechanism.
+    Depending on the number of rounds, it sets the time for work, short break, or long break.
+    """
+    global reps
+    reps += 1
+
+    work_sec = WORK_MIN * 60
+    short_break_sec = SHORT_BREAK_MIN * 60
+    long_break_sec = LONG_BREAK_MIN * 60
+
+    if reps % 8 == 0:
+        count_down(long_break_sec)
+        title_label.config(text="Break", fg=RED)
+    elif reps % 2 == 0:
+        count_down(short_break_sec)
+        title_label.config(text="Break", fg=PINK)
+    else:
+        count_down(work_sec)
+        title_label.config(text="Work", fg=GREEN)
+
+# ---------------------------- COUNTDOWN MECHANISM ------------------------------- # 
+
+
+def count_down(count: int) -> None:
+    """
+    The count_down() function is responsible for counting down the timer.
+    It takes `count` as an argument - the time in seconds to count down.
+    """
+    count_sec = count % 60
+    count_min = math.floor(count / 60)
+    if count_sec < 10:
+        count_sec = "{:02d}".format(count_sec)
+        # 2 solution count_seconds = f"0{count_sec}"
+
+    canvas.itemconfig(timer_text, text=f"{count_min}:{count_sec}")
+    if count > 0:
+        global timer
+        timer = window.after(1000, count_down, count - 1)
+    else:
+        start_timer()
+        work_sessions = math.floor(reps / 2)
+        marks = ""
+        for _ in range(work_sessions):
+            marks += "✓"
+        check_marks.config(text=marks)
+
+
+# ---------------------------- UI SETUP ------------------------------- #
+window = Tk()
+window.title("Pomodoro")
+window.config(padx=100, pady=100, bg=YELLOW)
+
+title_label = Label(text="Timer", bg=YELLOW, fg=GREEN, font=(FONT_NAME, 50))
+title_label.grid(column=1, row=0)
+
+canvas = Canvas(height=224, width=200, bg=YELLOW, highlightthickness=0)
+tomato_img = PhotoImage(file="images/tomato.png")
+canvas.create_image(100, 112, image=tomato_img)
+timer_text = canvas.create_text(100, 130, fill="white", text="00:00", font=(FONT_NAME, 35, "bold"))
+canvas.grid(column=1, row=1)
+
+start_button = Button(text="Start", width=7, highlightthickness=0, command=start_timer)
+start_button.grid(column=0, row=2)
+
+reset_button = Button(text="Reset", width=7, highlightthickness=0, command=reset_timer)
+reset_button.grid(column=2, row=2)
+
+check_marks = Label(bg=YELLOW, fg=GREEN)
+check_marks.grid(column=1, row=3)
+
+window.mainloop()
