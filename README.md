@@ -1,8 +1,12 @@
-# Pomodoro Timer 🍅⏱️
+# Pomodoro Timer 🍅⏱️⏳
 
 ## Description
 
 The Pomodoro Timer is a productivity tool that helps users manage their time effectively by breaking work into intervals separated by short breaks. This application implements the Pomodoro Technique, allowing users to focus on tasks for a set period and then take short breaks to relax. 
+<div style="display: flex;">
+    <img src="images/Screenshot_Pomodoro_1.png" style="width: 49%;" alt="Work Session">
+    <img src="images/Screenshot_Pomodoro_2.png" style="width: 49%;" alt="Break Session">
+</div>
 
 ## Features
 
